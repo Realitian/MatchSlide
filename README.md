@@ -1,5 +1,4 @@
-# MatchSlide
-MatchSlide for Bruce Washington in Australia from upwork
+# Post description
 
 hello, everyone
 
@@ -12,9 +11,11 @@ requirements are
 -  need to be used following code for application for full-screen mode.
 - preferred in a Linux environment to run and compile with CMakeList file
 
-
+# Offer description
 can I make an offer that 250 dollars for developing functionality to combine 5 frames into one frame? I will provide you source code and data for everything you need to implement. what do you think?
 
 it's an OpenGL appication
 
 application
+
+# milestone 1 : implement parallel video rendering function
