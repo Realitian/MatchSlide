@@ -2,32 +2,36 @@ cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0054 NEW)
 project(MatchSlide CXX)
 set(CMAKE_CXX_STANDARD 14)
-add_subdirectory(lib/FFmpeg)
+#add_subdirectory(lib/FFmpeg)
 
 add_subdirectory(NetworkAPI)
 add_subdirectory(External)
-find_package(PkgConfig REQUIRED)
+#find_package(PkgConfig REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
 # Look for pthread && spdlog
 find_package(Threads)
 
+include_directories(${FFMPEG_INCLUDE_DIRS})
+include_directories(${GLEW_INCLUDE_DIRS})
+include_directories(${GLFW_INCLUDE_DIRS})
+
 # Look for Truetype && libpng
-find_package(Freetype REQUIRED)
+#find_package(Freetype REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
-pkg_check_modules(PNG REQUIRED libpng)
+#pkg_check_modules(PNG REQUIRED libpng)
 include_directories(${PNG_INCLUDE_DIRS})
 
 # Look for GL requirements
-pkg_check_modules(LIBEPOXY REQUIRED epoxy)
+#pkg_check_modules(LIBEPOXY REQUIRED epoxy)
 include_directories(${LIBEPOXY_INCLUDE_DIR})
-pkg_check_modules(LIBDRM REQUIRED libdrm)
+#pkg_check_modules(LIBDRM REQUIRED libdrm)
 include_directories(${LIBDRM_INCLUDE_DIRS})
-pkg_check_modules(GBM REQUIRED gbm)
+#pkg_check_modules(GBM REQUIRED gbm)
 include_directories(${GBM_INCLUDE_DIRS})
-pkg_check_modules(EGL REQUIRED egl)
+#pkg_check_modules(EGL REQUIRED egl)
 include_directories(${EGL_INCLUDE_DIRS})
 # Set necessary link libraries
 set(REQUIRED_EXTERNAL_LIBS

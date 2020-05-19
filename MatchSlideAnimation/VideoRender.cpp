@@ -96,7 +96,11 @@ void VideoRender::openVideoFrame(AppData *data, std::string filename) {
             if (data->fmt_ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
                 data->stream_idx = i;
                 data->time_base = data->fmt_ctx->streams[i]->time_base;
-                data->time_base = (AVRational){1, 90000};
+                
+				//data->time_base = (AVRational){1, 90000};
+				data->time_base.num = 1;
+				data->time_base.den = 90000;
+
                 break;
             }
         }
@@ -183,7 +187,7 @@ bool VideoRender::readFrame(AppData *data) {
         int response;
 
         while (av_read_frame(data->fmt_ctx, data->packet) >= 0) {
-            if (reinterpret_cast<AVStream *>(data->packet->stream_index) not_eq (data->video_stream)) {
+            if (reinterpret_cast<AVStream *>(data->packet->stream_index) != (data->video_stream)) {
                 av_packet_unref(data->packet);
                 continue;
             }

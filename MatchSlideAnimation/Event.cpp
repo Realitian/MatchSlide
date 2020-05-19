@@ -35,8 +35,8 @@ EVTVideo::~EVTVideo() {
 
 void EVTVideo::Init() {
     // Load shaders
-    ResourceManager::LoadShader("/home/nirmalgajera/Documents/RenderVideo/sprite.vs",
-                                "/home/nirmalgajera/Documents/RenderVideo/sprite.fs", nullptr, "sprite");
+    ResourceManager::LoadShader("D:\\8\\MatchSlide\\sprite.vs",
+                                "D:\\8\\MatchSlide\\sprite.fs", nullptr, "sprite");
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width),
                                       static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
@@ -45,14 +45,14 @@ void EVTVideo::Init() {
 
     //define video file name
     filename.emplace_back(
-            "/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Background - Wales - Right.mov");
+            "D:\\8\\Video\\DanielStreicker_2018P-480p-en.mp4");
     filename.emplace_back(
-            "/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Background - Australia - Left.mov");
+            "D:\\8\\Video\\SuleikaJaouad_2019-480p-en.mp4");
     filename.emplace_back(
-            "/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Rising Sun.mov");
-    filename.emplace_back("/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Shield - Australia.mov");
-    filename.emplace_back("/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Shield - Wales.mov");
-    filename.emplace_back("/home/nirmalgajera/Documents/Render Engine Requirement Examples/MatchSlide/Rugby World Cup/Composite Example.mov");
+            "D:\\8\\Video\\BrandonClifford_2019U-480p-en.mp4");
+    filename.emplace_back("D:\\8\\Video\\JessKutch_2019U-480p-en.mp4");
+    filename.emplace_back("D:\\8\\Video\\JulianTreasure_2012G-480p.mp4");
+    filename.emplace_back("D:\\8\\Video\\NadyaMason_2019S-480p-en.mp4");
 
     // Printing the vector
     for (auto it = filename.begin(); it != filename.end(); ++it)
@@ -75,7 +75,7 @@ void EVTVideo::Init() {
         videolayer.push_back(videovector);
     }*/
 
-  // Load textures
+	// Load textures
     Shader myShader;
     myShader = ResourceManager::GetShader("sprite");
     Renderer = new Sprite_Renderer(myShader);
@@ -84,14 +84,15 @@ void EVTVideo::Init() {
     else {
         ResourceManager::LoadVideoTexture(this->Width,this->Height, "MatchSideBackGroundsRight");
     }
-    // Set render-specific controls
+	// Set render-specific controls
     Text = new TextRenderer(this->Width, this->Height);
 //    Text->Load("/home/nirmalgajera/Documents/Super/Font/demo.ttf", 50);
-    auto ppef = ResourceManager::GetShader("postprocessing");
-    ResourceManager::LoadShader("/home/nirmalgajera/Documents/RenderVideo/effect.vs",
-                                "/home/nirmalgajera/Documents/RenderVideo/effect.fs", nullptr, "effect");
-    effect = new PostProcessor(ppef, this->Width, this->Height);
-    effect = new PostProcessor(ResourceManager::GetShader("effect"), this->Width, this->Height);
+	auto ppef = ResourceManager::GetShader("postprocessing");
+	ResourceManager::LoadShader("D:\\8\\MatchSlide\\effect.vs",
+                                "D:\\8\\MatchSlide\\effect.fs", nullptr, "effect");
+	
+	effect = new PostProcessor(ppef, this->Width, this->Height);
+	effect = new PostProcessor(ResourceManager::GetShader("effect"), this->Width, this->Height);
 
     /*  network = new JSONAPI();
       network->Start();*/

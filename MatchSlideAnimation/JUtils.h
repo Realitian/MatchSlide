@@ -111,8 +111,8 @@ namespace J {
     }
   
     void print_start() {
-      std::time_t start_time_t = std::chrono::high_resolution_clock::to_time_t(t_start);
-      std::cout << "start time: " << std::ctime(&start_time_t) << '\n';
+      /*std::time_t start_time_t = std::chrono::system_clock::to_time_t( t );
+      std::cout << "start time: " << std::ctime(&start_time_t) << '\n';*/
     }
   
     void add_offset(int offset_seconds) {

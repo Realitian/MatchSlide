@@ -24,7 +24,7 @@
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
         GLFWmonitor *monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode *mode = glfwGetVideoMode(monitor);
@@ -32,7 +32,11 @@
         glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-        GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "SuperProvision", monitor, NULL);
+
+		int win_width = mode->width * 0.5;
+		int win_height = mode->height * 0.5;
+
+        GLFWwindow *window = glfwCreateWindow(win_width, win_height, "SuperProvision", /*monitor*/NULL, NULL);
         //GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", NULL, NULL);
         glfwMakeContextCurrent(window);
         // print out some info about the graphics drivers
@@ -47,14 +51,14 @@
             return -1;
         }
 
-        EVTVideo* evtVideo = new EVTVideo(mode->width, mode->height);
+        EVTVideo* evtVideo = new EVTVideo(win_width, win_height);
         // make sure the viewport matches the new window dimensions; note that width and
         // height will be significantly larger than specified on retina displays.
-        glViewport(0, 0, mode->width, mode->height);
+        glViewport(0, 0, win_width, win_height);
        // Set OpenGL options
-        glEnable(GL_CULL_FACE);
+        /*glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         // Initialize game
@@ -64,10 +68,10 @@
             // Calculate delta time
             glfwPollEvents();
             // Render
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            evtVideo->Render();
+            //evtVideo->Render();
             glfwSwapBuffers(window);
             glFlush();
         }

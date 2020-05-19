@@ -17,7 +17,7 @@
 
 #include "MsgPack.h"
 
-#ifdef WINVER
+#ifdef _WINDOWS
 #include <SDKDDKVer.h>
 #include <Ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
