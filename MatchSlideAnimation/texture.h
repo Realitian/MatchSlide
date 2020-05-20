@@ -8,7 +8,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-
+#include <Windows.h>
 #include <GL/glew.h>
 #include <vector>
 // Texture2D is able to store and configure a texture in OpenGL.
@@ -22,7 +22,8 @@ public:
     void Generate(GLuint width, GLuint height, unsigned char* data);
     void GenerateCubeMap(GLuint width, GLuint height,  unsigned char* data);
     void GeneratevideoTexture(GLuint width, GLuint height);
-//        void Update(GLuint width, GLuint height, const void* data);
+        
+	void Update(GLuint width, GLuint height, const void* data);
     void Bind() const;
     void BindCubeMap() const;
 

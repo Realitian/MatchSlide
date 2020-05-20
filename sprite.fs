@@ -5,5 +5,6 @@ out vec4 color;
 uniform sampler2D image;
 
 void main() {
-    color = texture(image, TexCoords);
+	vec4 yuv = texture(image, TexCoords);
+    color = vec4(yuv.r, 0, 0, 1.0);
 }

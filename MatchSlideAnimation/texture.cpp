@@ -82,16 +82,16 @@ void Texture::GenerateCubeMap(GLuint width, GLuint height,  unsigned char* data)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-//    void Texture::Update(GLuint width, GLuint height, const void* data)
-//    {
-//        // XXX glTextureSubImage2D() requires GL4.5
-//        this->Bind();
-//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-//            width, height,
-//            GL_BGR, // this->Image_Format,
-//            GL_UNSIGNED_BYTE, data);
-//    }
-//
+void Texture::Update(GLuint width, GLuint height, const void* data)
+{
+    // XXX glTextureSubImage2D() requires GL4.5
+    this->Bind();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+        width/2, height/2,
+        GL_RGBA, // this->Image_Format,
+        GL_UNSIGNED_BYTE, data);
+}
+
 void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, this->TextureID);
@@ -103,6 +103,9 @@ void Texture::BindCubeMap() const
 }
 
 void Texture::GeneratevideoTexture(GLuint width, GLuint height){
+	Width = width;
+	Height = height;
+
 // All upcoming GL_TEXTURE_2D operations now have effect on this texture object
     glBindTexture(GL_TEXTURE_2D, this->TextureID);
     glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );

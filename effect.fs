@@ -41,4 +41,7 @@ void main()
     {
         color =  texture(scene, TexCoords);
     }
+
+    color = vec4(1, 0, 0, 1.0);
+
 }

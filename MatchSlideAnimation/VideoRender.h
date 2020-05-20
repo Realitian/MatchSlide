@@ -7,6 +7,8 @@
 #ifndef VIDEORENDER_H
 #define VIDEORENDER_H
 
+#include "texture.h"
+
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
@@ -30,17 +32,16 @@ extern "C" {
 // app data structure
 typedef struct {
     AVFormatContext *fmt_ctx;
-    int stream_idx;
+    int video_stream_idx = 0;
     AVRational time_base;
     AVStream *video_stream;
-    AVCodecContext *codec_ctx;
-    AVCodecContext *pCodecCtxOrig;
+    AVCodecContext *video_codec_ctx;
     AVCodec *decoder;
-    AVPacket *packet;
+    AVPacket packet;
     AVFrame *av_frame;
-    AVFrame *gl_frame;
     AVStream *pStream;
-    struct SwsContext *conv_ctx;
+	int video_width, video_height;
+    AVPixelFormat pixFmt;
 } AppData;
 
 class VideoRender {
@@ -49,11 +50,9 @@ public:
     ~VideoRender();
     void clearAppData(AppData *data);
     void openVideoFrame(AppData *data, std::string filename);
-    bool readFrame(AppData *data);
+    void readFrame(AppData *data, Texture* texture);
+	void decodeFrame(AppData *data, Texture* texture);
     void initializeAppData(AppData *data);
-    bool video_reader_seek_frame(AppData *data, int64_t ts);
-
-
 private:
     J::TimedLoop vtim, atim;
 };

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * User: Bruce Washington
  * Date: 11/4/20.
  *
@@ -11,13 +11,15 @@
 #include <iostream>
 
 EVTVideo::EVTVideo(GLuint width, GLuint height)
-        : Width(width), Height(height) {
+        : Width(width), Height(height),
+	network(0){	
 
 }
 EVTVideo::~EVTVideo() {
     delete Renderer;
     delete Text;
-    delete network;
+	if (network)
+		delete network;
     delete effect;
     direction = true;
     Movement = glm::vec3(Width/1.95, (double)Width,0);
@@ -44,15 +46,13 @@ void EVTVideo::Init() {
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 
     //define video file name
-    filename.emplace_back(
-            "D:\\8\\Video\\DanielStreicker_2018P-480p-en.mp4");
-    filename.emplace_back(
-            "D:\\8\\Video\\SuleikaJaouad_2019-480p-en.mp4");
-    filename.emplace_back(
-            "D:\\8\\Video\\BrandonClifford_2019U-480p-en.mp4");
+    filename.emplace_back("D:/8/V_S/Background - Australia - Left.mov");
+    filename.emplace_back("D:\\8\\Video\\SuleikaJaouad_2019-480p-en.mp4");
+
+    /*filename.emplace_back("D:\\8\\Video\\BrandonClifford_2019U-480p-en.mp4");
     filename.emplace_back("D:\\8\\Video\\JessKutch_2019U-480p-en.mp4");
     filename.emplace_back("D:\\8\\Video\\JulianTreasure_2012G-480p.mp4");
-    filename.emplace_back("D:\\8\\Video\\NadyaMason_2019S-480p-en.mp4");
+    filename.emplace_back("D:\\8\\Video\\NadyaMason_2019S-480p-en.mp4");*/
 
     // Printing the vector
     for (auto it = filename.begin(); it != filename.end(); ++it)
@@ -84,6 +84,8 @@ void EVTVideo::Init() {
     else {
         ResourceManager::LoadVideoTexture(this->Width,this->Height, "MatchSideBackGroundsRight");
     }
+
+#if 0
 	// Set render-specific controls
     Text = new TextRenderer(this->Width, this->Height);
 //    Text->Load("/home/nirmalgajera/Documents/Super/Font/demo.ttf", 50);
@@ -100,11 +102,12 @@ void EVTVideo::Init() {
     // using transform() function and ::toupper in STL
     transform(display.begin(), display.end(), display.begin(), ::toupper);
     transform(display1.begin(), display1.end(), display1.begin(), ::toupper);
-
+#endif
 }
 
 std::mutex m;
 void EVTVideo::Render() {
+#if 0
    /* auto currentSuperFontData = network->getSuperFontDetails();
     for (std::vector<struct SuperFontData>::iterator it = currentSuperFontData.begin(); it != currentSuperFontData.end(); ++it) {
         std::string horsePosition = it->super_string;
@@ -119,19 +122,25 @@ void EVTVideo::Render() {
     }
     /*--------------------------------------------------------------------------------------------------------*/
     //Background thread for Animation
-    std::thread t1(&EVTVideo::updateRight,this);
-    std::thread t2(&EVTVideo::updateleft,this);
-    std::thread t3(&EVTVideo::updatebuttom,this);
+    //std::thread t1(&EVTVideo::updateRight,this);
+    //std::thread t2(&EVTVideo::updateleft,this);
+    //std::thread t3(&EVTVideo::updatebuttom,this);
     /*--------------------------------------------------------------------------------------------------------*/
+#endif
+
+	Texture* texture = ResourceManager::GetTexture("MatchSideBackGroundsRight");
 
     //left side Background
-#pragma omp parallel
-    videolayer->readFrame(&data[0]);
-#pragma omp parallel
-        Renderer->DrawSprite(*ResourceManager::GetTexture("MatchSideBackGroundsRight"),
+//#pragma omp parallel
+    videolayer->readFrame(&data[0], texture);
+//#pragma omp parallel
+
+	Renderer->DrawSprite(*texture,
                              glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f,
                              glm::vec4(Movement.x, this->Width, 0.0f, 0.0f)
         );
+
+#if 0
     /*--------------------------------------------------------------------------------------------------------
     //Right side Background
     videolayer1->readFrame(&data[1]);
@@ -143,10 +152,11 @@ void EVTVideo::Render() {
     //frame timing
 
 
-    t1.join();
-    t2.join();
-    t3.join();
+    //t1.join();
+    //t2.join();
+    //t3.join();
     effect->EndRender();
+#endif
 }
 
 void EVTVideo::updateRight() {
