@@ -17,18 +17,19 @@ EVTVideo::EVTVideo(GLuint width, GLuint height)
 }
 EVTVideo::~EVTVideo() {
     delete Renderer;
-    delete Text;
+    //delete Text;
 	if (network)
 		delete network;
-    delete effect;
+    //delete effect;
     direction = true;
     Movement = glm::vec3(Width/1.95, (double)Width,0);
     filename.clear();
-    for (auto & i : data) {
-        avformat_close_input(&i.fmt_ctx);
-        videolayer->clearAppData(&i);
-    }
-    delete videolayer;
+    
+	for ( int i = 0 ; i < 5 ; i++ ) {
+        avformat_close_input( &data[i].fmt_ctx );
+		videolayers[i]->clearAppData(&data[i]);
+		delete videolayers[i];
+	}
     timeframe=0;
     Videospeed= glm::vec3(100.0f,100.0f,100.0f);
     pts=0;
@@ -46,45 +47,28 @@ void EVTVideo::Init() {
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 
     //define video file name
-    filename.emplace_back("D:\\8\\Video\\SuleikaJaouad_2019-480p-en.mp4");
     filename.emplace_back("D:/8/V_S/Background - Australia - Left.mov");
+	filename.emplace_back("D:/8/V_S/Background - Wales - Right.mov");
+	filename.emplace_back("D:/8/V_S/Rising Sun.mov");
+	filename.emplace_back("D:/8/V_S/Shield - Australia.mov");
+	filename.emplace_back("D:/8/V_S/Shield - Wales.mov");
 
-    /*filename.emplace_back("D:\\8\\Video\\BrandonClifford_2019U-480p-en.mp4");
-    filename.emplace_back("D:\\8\\Video\\JessKutch_2019U-480p-en.mp4");
-    filename.emplace_back("D:\\8\\Video\\JulianTreasure_2012G-480p.mp4");
-    filename.emplace_back("D:\\8\\Video\\NadyaMason_2019S-480p-en.mp4");*/
-
-    // Printing the vector
-    for (auto it = filename.begin(); it != filename.end(); ++it)
-        std::cout << ' ' << *it << std::endl;
-
-    //video Threading
-    videolayer=new VideoRender();
-    videolayer1=new VideoRender();
-    videolayer->initializeAppData(&data[0]);
-    videolayer1->initializeAppData(&data[1]);
-
-    videolayer->openVideoFrame(&data[0],filename[0]);
-    videolayer1->openVideoFrame(&data[1],filename[1]);
-
-    // Load up the vector with MyClass objects
-   /* for (auto i = 0; i < 4; i++) {
-        videovector = new VideoRender();
-        videovector->initializeAppData(&data[i]);
-        videovector->openVideoFrame(&data[i], filename[i]);
-        videolayer.push_back(videovector);
-    }*/
-
-	// Load textures
-    Shader myShader;
+	Shader myShader;
     myShader = ResourceManager::GetShader("sprite");
     Renderer = new Sprite_Renderer(myShader);
+
+	for (int i = 0; i < 5; i++) {
+		videolayers[i] = new VideoRender();
+		videolayers[i]->initializeAppData(&data[i]);
+		videolayers[i]->openVideoFrame(&data[i],filename[i]);
+		ResourceManager::LoadVideoTexture(this->Width,this->Height, filename[i]);
+	}
+
+	// Load textures
+    
     if (!Renderer)
         std::cout << "Error" << std::endl;
     else {
-        ResourceManager::LoadVideoTexture(this->Width,this->Height, "MatchSideBackGroundsRight-Y");
-		ResourceManager::LoadVideoTexture(this->Width,this->Height, "MatchSideBackGroundsRight-U");
-		ResourceManager::LoadVideoTexture(this->Width,this->Height, "MatchSideBackGroundsRight-V");
     }
 
 #if 0
@@ -130,19 +114,15 @@ void EVTVideo::Render() {
     /*--------------------------------------------------------------------------------------------------------*/
 #endif
 
-	Texture* textureY = ResourceManager::GetTexture("MatchSideBackGroundsRight-Y");
-	Texture* textureU = ResourceManager::GetTexture("MatchSideBackGroundsRight-U");
-	Texture* textureV = ResourceManager::GetTexture("MatchSideBackGroundsRight-V");
+	for (int i = 0; i < 5; i++) {
+		Texture* texture = ResourceManager::GetTexture(filename[i]);
+		videolayers[i]->readFrame(&data[i], texture);
 
-    //left side Background
-//#pragma omp parallel
-    videolayer->readFrame(&data[0], textureY, textureU, textureV);
-//#pragma omp parallel
-
-	Renderer->DrawSprite(textureY, textureU, textureV,
-		glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f,
-		glm::vec4(Movement.x, this->Width*0.5, 0.0f, 0.0f)
-	);
+		Renderer->DrawSprite(texture,
+			glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f,
+			glm::vec4(0, 0, 0.0f, 0.0f)
+		);
+	}
 
 #if 0
     /*--------------------------------------------------------------------------------------------------------

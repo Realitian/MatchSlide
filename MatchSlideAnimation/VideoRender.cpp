@@ -40,9 +40,9 @@ void VideoRender::clearAppData(AppData *data) {
     if (data->av_frame) av_free(data->av_frame);
     if (data->video_codec_ctx) avcodec_close(data->video_codec_ctx);
     if (data->fmt_ctx) avformat_free_context(data->fmt_ctx);
-    av_frame_free(&data->av_frame);
-    avformat_close_input(&data->fmt_ctx);
-	avcodec_free_context(&data->video_codec_ctx);
+    //av_frame_free(&data->av_frame);
+    //avformat_close_input(&data->fmt_ctx);
+	//avcodec_free_context(&data->video_codec_ctx);
 }
 
 static void pgm_save(unsigned char *buf, int wrap, int xsize, int ysize,
@@ -162,14 +162,23 @@ void VideoRender::openVideoFrame(AppData *data, std::string filename) {
     data->video_height = data->video_codec_ctx->height;
     data->pixFmt = data->video_codec_ctx->pix_fmt;
 
-    //emit videoInfoReady(data->video_width, data->video_height, data->pixFmt);
-
     av_dump_format(data->fmt_ctx, 0, filename.c_str(), 0);
     
 	data->av_frame = av_frame_alloc();
+	
+	data->gl_frame = av_frame_alloc();
+	uint8_t           *buffer = NULL;
+	int numBytes = avpicture_get_size(AV_PIX_FMT_RGBA, data->video_codec_ctx->width, data->video_codec_ctx->height);
+    buffer=(uint8_t *)av_malloc(numBytes*sizeof(uint8_t));
+	avpicture_fill((AVPicture *)data->gl_frame, buffer, AV_PIX_FMT_RGBA, data->video_codec_ctx->width, data->video_codec_ctx->height);
+
+	data->sws_ctx = sws_getContext(	data->video_codec_ctx->width, data->video_codec_ctx->height,
+                  data->video_codec_ctx->pix_fmt, data->video_codec_ctx->width, 
+                  data->video_codec_ctx->height, AV_PIX_FMT_RGBA, SWS_BICUBIC,
+                  NULL, NULL, NULL);
 }
 
-void VideoRender::readFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV)
+void VideoRender::readFrame(AppData *data, Texture* texture)
 {
     av_init_packet(&data->packet);
     data->packet.data = nullptr;
@@ -182,7 +191,7 @@ void VideoRender::readFrame(AppData *data, Texture* textureY, Texture* textureU,
             {
                 while (avcodec_receive_frame(data->video_codec_ctx, data->av_frame) == 0)
                 {
-                    decodeFrame(data, textureY, textureU, textureV);
+                    decodeFrame(data, texture);
                 }
             }
         }
@@ -197,41 +206,32 @@ void VideoRender::readFrame(AppData *data, Texture* textureY, Texture* textureU,
     }*/
 }
 
-void VideoRender::decodeFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV)
+void VideoRender::decodeFrame(AppData *data, Texture* texture)
 {
+	int height_scaled = sws_scale(data->sws_ctx, (uint8_t const * const *)data->av_frame->data,
+          data->av_frame->linesize, 0, data->video_codec_ctx->height,
+          data->gl_frame->data, data->gl_frame->linesize);
+
     switch (data->av_frame->format) {
         case AV_PIX_FMT_YUV420P:
         {
-            /*m_yuvData.Y.resize(data->av_frame->linesize[0] * data->av_frame->height);
-            memcpy_s(m_yuvData.Y.data(), static_cast<size_t>(m_yuvData.Y.size()), data->av_frame->data[0], static_cast<size_t>(m_yuvData.Y.size()));
-            m_yuvData.U.resize(data->av_frame->linesize[1] * data->av_frame->height / 2);
-            memcpy_s(m_yuvData.U.data(), static_cast<size_t>(m_yuvData.U.size()), data->av_frame->data[1], static_cast<size_t>(m_yuvData.U.size()));
-            m_yuvData.V.resize(data->av_frame->linesize[2] * data->av_frame->height / 2);
-            memcpy_s(m_yuvData.V.data(), static_cast<size_t>(m_yuvData.V.size()), data->av_frame->data[2], static_cast<size_t>(m_yuvData.V.size()));
-            m_yuvData.yLineSize = data->av_frame->linesize[0];
-            m_yuvData.uLineSize = data->av_frame->linesize[1];
-            m_yuvData.vLineSize = data->av_frame->linesize[2];
-            m_yuvData.height = data->av_frame->height;
-            emit videoFrameDataReady(m_yuvData);*/
+			/*textureY->Update(data->av_frame->linesize[0],
+				data->av_frame->height,
+				data->av_frame->data[0]);	
+
+			textureU->Update(data->av_frame->linesize[1],
+				data->av_frame->height/2,
+				data->av_frame->data[1]);	
+
+			textureV->Update(data->av_frame->linesize[2],
+				data->av_frame->height/2,
+				data->av_frame->data[2]);	*/
 
             break;
         }
 		case AV_PIX_FMT_YUVA444P12LE:
 		{
-			/*m_yuvData.Y.resize(data->av_frame->linesize[0] * data->av_frame->height);
-            memcpy_s(m_yuvData.Y.data(), static_cast<size_t>(m_yuvData.Y.size()), data->av_frame->data[0], static_cast<size_t>(m_yuvData.Y.size()));
-            m_yuvData.U.resize(data->av_frame->linesize[1] * data->av_frame->height);
-            memcpy_s(m_yuvData.U.data(), static_cast<size_t>(m_yuvData.U.size()), data->av_frame->data[1], static_cast<size_t>(m_yuvData.U.size()));
-            m_yuvData.V.resize(data->av_frame->linesize[2] * data->av_frame->height);
-            memcpy_s(m_yuvData.V.data(), static_cast<size_t>(m_yuvData.V.size()), data->av_frame->data[2], static_cast<size_t>(m_yuvData.V.size()));
-
-            m_yuvData.yLineSize = data->av_frame->linesize[0];
-            m_yuvData.uLineSize = data->av_frame->linesize[1];
-            m_yuvData.vLineSize = data->av_frame->linesize[2];
-            m_yuvData.height = data->av_frame->height;
-
-            emit videoFrameDataReady(m_yuvData);*/
-
+			
 			break;
 		}
         case AV_PIX_FMT_NV12:
@@ -243,22 +243,9 @@ void VideoRender::decodeFrame(AppData *data, Texture* textureY, Texture* texture
             break;
     }
 
-	/*char buf[1024];
-	snprintf(buf, sizeof(buf), "output/%d%s", data->video_codec_ctx->frame_number, ".pgm");
-	pgm_save(data->av_frame->data[2], data->av_frame->linesize[2],
-				data->av_frame->width, data->av_frame->height, buf);*/
-
-	textureY->Update(data->av_frame->linesize[0],
-		data->av_frame->height,
-		data->av_frame->data[0]);	
-
-	textureU->Update(data->av_frame->linesize[1],
-		data->av_frame->height/2,
-		data->av_frame->data[1]);	
-
-	textureV->Update(data->av_frame->linesize[2],
-		data->av_frame->height/2,
-		data->av_frame->data[2]);	
+	texture->Update(data->av_frame->width,
+				data->av_frame->height,
+				data->gl_frame->data[0]);
 }
 
 VideoRender::~VideoRender() {	

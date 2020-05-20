@@ -39,9 +39,12 @@ typedef struct {
     AVCodec *decoder;
     AVPacket packet;
     AVFrame *av_frame;
+	AVFrame *gl_frame;
     AVStream *pStream;
 	int video_width, video_height;
     AVPixelFormat pixFmt;
+
+	SwsContext* sws_ctx;
 } AppData;
 
 class VideoRender {
@@ -50,8 +53,8 @@ public:
     ~VideoRender();
     void clearAppData(AppData *data);
     void openVideoFrame(AppData *data, std::string filename);
-    void readFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV);
-	void decodeFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV);
+    void readFrame(AppData *data, Texture* texture);
+	void decodeFrame(AppData *data, Texture* texture);
     void initializeAppData(AppData *data);
 private:
     J::TimedLoop vtim, atim;

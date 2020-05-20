@@ -19,7 +19,7 @@ class Sprite_Renderer
 public:
     Sprite_Renderer(Shader &shader);
     ~Sprite_Renderer();
-    void DrawSprite(Texture* textureY, Texture* textureU, Texture* textureV, glm::vec2 position,
+    void DrawSprite(Texture* texture, glm::vec2 position,
                     glm::vec2 size = glm::vec2(10, 10), GLfloat rotate = 0.0f, glm::vec4 Movement = glm::vec4(0.0f, 0.0f ,0.0f, 0.0f)); // initializes and configures the quad's buffer and vertex attributes renders a defined quad textured with given sprite
 private:
     Shader shader;

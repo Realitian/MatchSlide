@@ -47,10 +47,11 @@ private:
     //leftside background
     glm::vec3 Movement = glm::vec3((double)Width/1.95, (double)Width,0.0f);
     glm::vec3 Videospeed= glm::vec3(100.0f,100.0f,100.0f);
-    //Match Slide
-    AppData data[4];
-    VideoRender * videolayer=NULL;
-    VideoRender * videolayer1=NULL;
+    
+	//Match Slide
+    AppData data[5];
+    VideoRender* videolayers[5];
+
     Sprite_Renderer  *Renderer;
     // video file paths
     std::vector<std::string> filename;

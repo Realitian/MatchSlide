@@ -33,8 +33,8 @@
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-		int win_width = mode->width * 0.5;
-		int win_height = mode->height * 0.5;
+		int win_width = mode->width *0.5;
+		int win_height = mode->height *0.5;
 
         GLFWwindow *window = glfwCreateWindow(win_width, win_height, "SuperProvision", /*monitor*/NULL, NULL);
         //GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", NULL, NULL);
