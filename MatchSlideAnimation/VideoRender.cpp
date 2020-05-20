@@ -169,7 +169,7 @@ void VideoRender::openVideoFrame(AppData *data, std::string filename) {
 	data->av_frame = av_frame_alloc();
 }
 
-void VideoRender::readFrame(AppData *data, Texture* texture)
+void VideoRender::readFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV)
 {
     av_init_packet(&data->packet);
     data->packet.data = nullptr;
@@ -182,7 +182,7 @@ void VideoRender::readFrame(AppData *data, Texture* texture)
             {
                 while (avcodec_receive_frame(data->video_codec_ctx, data->av_frame) == 0)
                 {
-                    decodeFrame(data, texture);
+                    decodeFrame(data, textureY, textureU, textureV);
                 }
             }
         }
@@ -197,7 +197,7 @@ void VideoRender::readFrame(AppData *data, Texture* texture)
     }*/
 }
 
-void VideoRender::decodeFrame(AppData *data, Texture* texture)
+void VideoRender::decodeFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV)
 {
     switch (data->av_frame->format) {
         case AV_PIX_FMT_YUV420P:
@@ -248,9 +248,17 @@ void VideoRender::decodeFrame(AppData *data, Texture* texture)
 	pgm_save(data->av_frame->data[2], data->av_frame->linesize[2],
 				data->av_frame->width, data->av_frame->height, buf);*/
 
-	texture->Update(data[0].av_frame->width,
-		data[0].av_frame->height,
-		data[0].av_frame->data[0]);	
+	textureY->Update(data->av_frame->linesize[0],
+		data->av_frame->height,
+		data->av_frame->data[0]);	
+
+	textureU->Update(data->av_frame->linesize[1],
+		data->av_frame->height/2,
+		data->av_frame->data[1]);	
+
+	textureV->Update(data->av_frame->linesize[2],
+		data->av_frame->height/2,
+		data->av_frame->data[2]);	
 }
 
 VideoRender::~VideoRender() {	

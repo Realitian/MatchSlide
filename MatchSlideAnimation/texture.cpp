@@ -86,10 +86,13 @@ void Texture::Update(GLuint width, GLuint height, const void* data)
 {
     // XXX glTextureSubImage2D() requires GL4.5
     this->Bind();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-        width/2, height/2,
-        GL_RGBA, // this->Image_Format,
-        GL_UNSIGNED_BYTE, data);
+    //glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+    //    width/2, height/2,
+    //    GL_RGBA, // this->Image_Format,
+    //    GL_UNSIGNED_BYTE, data);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height,
+                 0, GL_RED, GL_UNSIGNED_BYTE, data);
 }
 
 void Texture::Bind() const
@@ -115,9 +118,9 @@ void Texture::GeneratevideoTexture(GLuint width, GLuint height){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    //NULL means reserve texture memory, but texels are undefined
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    ////NULL means reserve texture memory, but texels are undefined
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height,
+    //             0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
     // Unbind texture when done, so we won't accidentily mess up our texture.
     glBindTexture(GL_TEXTURE_2D, 0);
 }

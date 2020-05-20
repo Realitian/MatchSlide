@@ -50,8 +50,8 @@ public:
     ~VideoRender();
     void clearAppData(AppData *data);
     void openVideoFrame(AppData *data, std::string filename);
-    void readFrame(AppData *data, Texture* texture);
-	void decodeFrame(AppData *data, Texture* texture);
+    void readFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV);
+	void decodeFrame(AppData *data, Texture* textureY, Texture* textureU, Texture* textureV);
     void initializeAppData(AppData *data);
 private:
     J::TimedLoop vtim, atim;
