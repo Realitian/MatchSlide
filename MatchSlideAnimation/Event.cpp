@@ -42,7 +42,7 @@ void EVTVideo::Init() {
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width),
                                       static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
-    ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
+    ResourceManager::GetShader("sprite").Use();
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 
     //define video file name
@@ -141,7 +141,7 @@ void EVTVideo::Render() {
 
 	Renderer->DrawSprite(textureY, textureU, textureV,
 		glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f,
-		glm::vec4(Movement.x, this->Width, 0.0f, 0.0f)
+		glm::vec4(Movement.x, this->Width*0.5, 0.0f, 0.0f)
 	);
 
 #if 0
